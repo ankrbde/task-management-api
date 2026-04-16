@@ -25,4 +25,12 @@ public class Task {
     long assignedUserId;
 
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = TaskStatus.TODO;
+        }
+        createdAt = LocalDateTime.now();
+    }
 }
