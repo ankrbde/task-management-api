@@ -4,6 +4,8 @@ import com.taskmanager.task.domain.Task;
 import com.taskmanager.task.dto.CreateTaskRequest;
 import com.taskmanager.task.dto.TaskResponse;
 import com.taskmanager.task.repository.TaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,5 +33,16 @@ public class TaskService {
                 saved.getTitle(),
                 saved.getDescription()
         );
+    }
+
+
+    public Page<TaskResponse> getTasks(Pageable pageable) {
+
+        return taskRepository.findAll(pageable)
+                .map(task -> new TaskResponse(
+                        task.getId(),
+                        task.getTitle(),
+                        task.getDescription()
+                ));
     }
 }
