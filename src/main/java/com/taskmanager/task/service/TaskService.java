@@ -88,4 +88,44 @@ public class TaskService {
                 updated.getDescription()
         );
     }
+
+    public TaskResponse updateStatus(Long id, TaskStatus newStatus) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+
+        validateStatusTransition(task.getStatus(), newStatus);
+
+        task.setStatus(newStatus);
+
+        Task updated = taskRepository.save(task);
+
+        return new TaskResponse(
+                updated.getId(),
+                updated.getTitle(),
+                updated.getDescription()
+        );
+    }
+
+    private void validateStatusTransition(TaskStatus current, TaskStatus next) {
+
+        if (current == null) return;
+
+        switch (current) {
+            case TODO:
+                if (next != TaskStatus.IN_PROGRESS) {
+                    throw new IllegalStateException("Invalid transition from TODO");
+                }
+                break;
+
+            case IN_PROGRESS:
+                if (next != TaskStatus.DONE) {
+                    throw new IllegalStateException("Invalid transition from IN_PROGRESS");
+                }
+                break;
+
+            case DONE:
+                throw new IllegalStateException("Task already completed");
+        }
+    }
 }
