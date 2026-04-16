@@ -2,8 +2,6 @@ package com.taskmanager.task.domain;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
 @Entity
 public class Task {
 
