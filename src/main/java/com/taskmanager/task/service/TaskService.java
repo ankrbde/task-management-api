@@ -12,8 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class TaskService {
 
@@ -109,7 +107,16 @@ public class TaskService {
 
     private void validateStatusTransition(TaskStatus current, TaskStatus next) {
 
-        if (current == null) return;
+        if (next == null) {
+            throw new IllegalArgumentException("Status cannot be null");
+        }
+
+        if (current == null) {
+            if (next != TaskStatus.TODO) {
+                throw new IllegalStateException("New tasks must start with TODO");
+            }
+            return;
+        }
 
         switch (current) {
             case TODO:
