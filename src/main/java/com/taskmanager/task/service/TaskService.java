@@ -27,6 +27,7 @@ public class TaskService {
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setStatus(TaskStatus.TODO);
         task.setCreatedAt(LocalDateTime.now());
 
         Task saved = taskRepository.save(task);
