@@ -1,5 +1,6 @@
 package com.taskmanager.task.controller;
 
+import com.taskmanager.task.domain.TaskStatus;
 import com.taskmanager.task.dto.CreateTaskRequest;
 import com.taskmanager.task.dto.TaskResponse;
 import com.taskmanager.task.service.TaskService;
@@ -29,8 +30,13 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<Page<TaskResponse>> getTasks(
-            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) TaskStatus status,
+            @RequestParam(required = false) Long assignedUserId,
+            Pageable pageable
     ) {
-        return ResponseEntity.ok(taskService.getTasks(pageable));
+        return ResponseEntity.ok(
+                taskService.getTasks(title, status, assignedUserId, pageable)
+        );
     }
 }
