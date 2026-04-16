@@ -6,6 +6,8 @@ import com.taskmanager.task.dto.TaskResponse;
 import com.taskmanager.task.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class TaskService {
 
@@ -20,6 +22,7 @@ public class TaskService {
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
+        task.setCreatedAt(LocalDateTime.now());
 
         Task saved = taskRepository.save(task);
 
