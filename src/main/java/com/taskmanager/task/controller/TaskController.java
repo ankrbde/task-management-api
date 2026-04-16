@@ -6,6 +6,7 @@ import com.taskmanager.task.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +28,9 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TaskResponse>> getTasks(Pageable pageable) {
+    public ResponseEntity<Page<TaskResponse>> getTasks(
+            @PageableDefault(size = 10, sort = "createdAt") Pageable pageable
+    ) {
         return ResponseEntity.ok(taskService.getTasks(pageable));
     }
 }
