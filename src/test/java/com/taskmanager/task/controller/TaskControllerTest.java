@@ -10,8 +10,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -47,5 +49,31 @@ class TaskControllerTest {
         mockMvc.perform(get("/api/tasks/1"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"));
+    }
+
+    @Test
+    void shouldCreateTask() throws Exception {
+
+        TaskResponse response = new TaskResponse(
+                1L,
+                "Learn Spring Boot",
+                "Build API"
+        );
+
+        when(taskService.createTask(any()))
+                .thenReturn(response);
+
+        mockMvc.perform(post("/api/tasks")
+                        .contentType("application/json")
+                        .content("""
+                {
+                  "title": "Learn Spring Boot",
+                  "description": "Build API"
+                }
+            """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.title").value("Learn Spring Boot"))
+                .andExpect(jsonPath("$.description").value("Build API"));
     }
 }
