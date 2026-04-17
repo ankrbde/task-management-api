@@ -5,17 +5,26 @@ import com.taskmanager.common.exception.TaskStateException;
 import com.taskmanager.task.domain.Task;
 import com.taskmanager.task.domain.TaskStatus;
 import com.taskmanager.task.repository.TaskRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
-    private final TaskRepository repository = Mockito.mock(TaskRepository.class);
-    private final TaskService service = new TaskService(repository);
+    @Mock
+    TaskRepository repository;
+
+    @InjectMocks
+    TaskService service;
 
     @Test
     void shouldThrowExceptionWhenTransitionFromDone() {
