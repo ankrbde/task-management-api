@@ -1,5 +1,7 @@
 package com.taskmanager.task.service;
 
+import com.taskmanager.common.exception.TaskNotFoundException;
+import com.taskmanager.common.exception.TaskStateException;
 import com.taskmanager.task.domain.Task;
 import com.taskmanager.task.domain.TaskStatus;
 import com.taskmanager.task.dto.CreateTaskRequest;
@@ -90,7 +92,7 @@ public class TaskService {
     public TaskResponse updateStatus(Long id, TaskStatus newStatus) {
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
 
         validateStatusTransition(task.getStatus(), newStatus);
 
@@ -105,15 +107,27 @@ public class TaskService {
         );
     }
 
+    public TaskResponse getTaskById(Long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+        return new TaskResponse(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription()
+        );
+    }
+
     private void validateStatusTransition(TaskStatus current, TaskStatus next) {
 
         if (next == null) {
-            throw new IllegalArgumentException("Status cannot be null");
+            throw new TaskStateException("Status cannot be null");
         }
 
         if (current == null) {
             if (next != TaskStatus.TODO) {
-                throw new IllegalStateException("New tasks must start with TODO");
+                throw new TaskStateException("New tasks must start with TODO");
             }
             return;
         }
@@ -121,18 +135,18 @@ public class TaskService {
         switch (current) {
             case TODO:
                 if (next != TaskStatus.IN_PROGRESS) {
-                    throw new IllegalStateException("Invalid transition from TODO");
+                    throw new TaskStateException("Invalid transition from TODO");
                 }
                 break;
 
             case IN_PROGRESS:
                 if (next != TaskStatus.DONE) {
-                    throw new IllegalStateException("Invalid transition from IN_PROGRESS");
+                    throw new TaskStateException("Invalid transition from IN_PROGRESS");
                 }
                 break;
 
             case DONE:
-                throw new IllegalStateException("Task already completed");
+                throw new TaskStateException("Task already completed");
         }
     }
 }

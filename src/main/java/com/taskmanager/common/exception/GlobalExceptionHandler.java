@@ -5,21 +5,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<?> handleIllegalState(IllegalStateException ex) {
+    @ExceptionHandler(TaskStateException.class)
+    public ResponseEntity<ErrorResponse> handleTaskState(TaskStateException ex) {
 
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "status", 400,
-                        "error", "BAD_REQUEST",
-                        "message", ex.getMessage()
-                ));
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                400,
+                "TASK_STATE_ERROR",
+                ex.getMessage()
+        );
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(TaskNotFoundException ex) {
+
+        ErrorResponse response = new ErrorResponse(
+                LocalDateTime.now(),
+                404,
+                "NOT_FOUND",
+                ex.getMessage()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
