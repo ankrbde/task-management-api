@@ -1,6 +1,7 @@
 package com.taskmanager.task.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,8 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    String title;
+    @NotBlank
+    private String title;
 
     String description;
 

@@ -5,7 +5,6 @@ import com.taskmanager.common.exception.TaskStateException;
 import com.taskmanager.task.domain.Task;
 import com.taskmanager.task.domain.TaskStatus;
 import com.taskmanager.task.repository.TaskRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +28,7 @@ class TaskServiceTest {
     @Test
     void shouldThrowExceptionWhenTransitionFromDone() {
 
+        // Arrange
         Task task = new Task();
         task.setId(1L);
         task.setStatus(TaskStatus.DONE);
@@ -36,6 +36,7 @@ class TaskServiceTest {
         Mockito.when(repository.findById(1L))
                 .thenReturn(Optional.of(task));
 
+        // Act + Assert
         assertThrows(TaskStateException.class, () ->
                 service.updateStatus(1L, TaskStatus.IN_PROGRESS)
         );
@@ -43,9 +44,6 @@ class TaskServiceTest {
 
     @Test
     void shouldAllowTransitionFromTodoToInProgress() {
-
-        TaskRepository repository = Mockito.mock(TaskRepository.class);
-        TaskService service = new TaskService(repository);
 
         Task task = new Task();
         task.setId(1L);
